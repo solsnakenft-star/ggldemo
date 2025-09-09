@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Illustrated History of Google — Interactive</title>
+  <meta name="description" content="An interactive, illustrated history of Google from Backrub (1996) to Gemini (2024)." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"] },
+          boxShadow: { glow: "0 0 0 3px rgba(59,130,246,0.35)" }
+        }
+      },
+      darkMode: 'class'
+    }
+  </script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    input[type=range]::-webkit-slider-thumb{ appearance:none; height:20px; width:20px; border-radius:999px; background:#2563eb; border:3px solid white; box-shadow:0 1px 4px rgba(0,0,0,.2)}
+    input[type=range]::-moz-range-thumb{ height:20px; width:20px; border:none; border-radius:999px; background:#2563eb }
+  </style>
+</head>
+<body x-data="app()" x-init="init()" :class="dark ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'" class="min-h-screen transition-colors">
+  <header class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-slate-900/70 border-b border-black/5 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
+      <img alt="Google logo" class="h-7 w-auto" src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"/>
+      <h1 class="font-semibold tracking-tight">Illustrated History of Google</h1>
+      <div class="ml-auto flex items-center gap-2">
+        <button @click="toggleTheme()" class="rounded-xl px-3 py-1.5 text-sm border border-black/10 dark:border-white/10 hover:shadow-glow transition">🌙/☀️ <span class="sr-only">Toggle theme</span></button>
+        <a href="#timeline" class="hidden sm:inline rounded-xl px-3 py-1.5 text-sm border border-black/10 dark:border-white/10 hover:shadow-glow">Timeline</a>
+        <a href="#gallery" class="hidden sm:inline rounded-xl px-3 py-1.5 text-sm border border-black/10 dark:border-white/10 hover:shadow-glow">Gallery</a>
+        <a href="#quiz" class="hidden sm:inline rounded-xl px-3 py-1.5 text-sm border border-black/10 dark:border-white/10 hover:shadow-glow">Quiz</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">From <span class="underline decoration-sky-400/60">Backrub</span> to <span class="underline decoration-violet-400/60">Gemini</span></h2>
+        <p class="mt-4 text-lg opacity-90">Explore key milestones that transformed a Stanford research project into a company powering search, maps, Android, YouTube, Chrome — and today, AI with Gemini.</p>
+        <div class="mt-6 flex gap-3">
+          <a href="#timeline" class="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium bg-blue-600 text-white hover:opacity-95 focus:outline-none focus:ring-4 focus:ring-blue-500/30">Start the timeline</a>
+          <button @click="feelingLucky()" class="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium border border-black/10 dark:border-white/10 hover:shadow-glow">I'm Feeling Lucky 🎲</button>
+        </div>
+        <p class="mt-3 text-xs opacity-70">Sources: official Google blogs/press, SEC filings, Wikipedia. Tap any card to view citations.</p>
+      </div>
+      <div class="relative">
+        <img class="rounded-3xl w-full shadow-lg" alt="Collage of Google products" src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_product_logos.png"/>
+      </div>
+    </div>
+  </section>
+
+  <section id="timeline" class="border-t border-black/5 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <div class="flex flex-col md:flex-row md:items-end gap-4 md:gap-8">
+        <div class="flex-1">
+          <h3 class="text-2xl font-semibold">Interactive timeline</h3>
+          <p class="opacity-80">Drag the slider, filter by category, or search for events.</p>
+        </div>
+        <div class="flex-1 grid sm:grid-cols-3 gap-3">
+          <input x-model="q" type="search" placeholder="Search events…" class="w-full rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 bg-white/70 dark:bg-slate-900/50"/>
+          <select x-model="category" class="w-full rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 bg-white/70 dark:bg-slate-900/50">
+            <option value="all">All categories</option>
+            <template x-for="c in categories" :key="c"><option :value="c" x-text="c"></option></template>
+          </select>
+          <button @click="resetFilters()" class="rounded-xl px-3 py-2 border border-black/10 dark:border-white/10">Reset</button>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <input x-model.number="year" type="range" min="1996" max="2025" step="1" class="w-full" />
+        <div class="flex justify-between text-xs mt-1 opacity-70">
+          <span>1996</span><span>2000</span><span>2005</span><span>2010</span><span>2015</span><span>2020</span><span>2025</span>
+        </div>
+      </div>
+
+      <div class="mt-6 grid md:grid-cols-2 gap-6">
+        <article x-show="current" class="rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden">
+          <div class="aspect-video bg-slate-100 dark:bg-slate-800 overflow-hidden">
+            <img :src="current.image" :alt="current.title" class="w-full h-full object-contain"/>
+          </div>
+          <div class="p-5">
+            <h4 class="text-xl font-semibold" x-text="current.year + ' · ' + current.title"></h4>
+            <p class="mt-2 opacity-90" x-text="current.summary"></p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200" x-text="current.category"></span>
+              <button @click="openSources(current)" class="text-xs underline opacity-70 hover:opacity-100">View sources</button>
+            </div>
+          </div>
+        </article>
+
+        <div>
+          <ul class="space-y-3 max-h[480px] overflow-auto pr-1">
+            <template x-for="e in filtered" :key="e.id">
+              <li>
+                <button @click="go(e)" class="w-full text-left rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-slate-900/40 hover:shadow-md transition p-4 flex items-start gap-3">
+                  <img :src="e.thumb" class="w-14 h-14 rounded-xl object-contain bg-slate-100 dark:bg-slate-800" :alt="e.title"/>
+                  <div>
+                    <div class="text-sm font-semibold" x-text="e.year + ' · ' + e.title"></div>
+                    <div class="text-xs opacity-80 line-clamp-2" x-text="e.summary"></div>
+                    <div class="mt-1 text-[10px] opacity-70" x-text="e.category"></div>
+                  </div>
+                </button>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="border-t border-black/5 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <h3 class="text-2xl font-semibold">Logos & product icons</h3>
+          <p class="opacity-80">Tap to expand. Pinch/scroll to zoom.</p>
+        </div>
+        <div class="text-sm opacity-70">Source: Wikimedia/Google press</div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <template x-for="img in gallery" :key="img">
+          <button @click="lightbox=img" class="aspect-square rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-white/60 dark:bg-slate-900/40">
+            <img :src="img" alt="Google gallery image" class="w-full h-full object-contain"/>
+          </button>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="border-t border-black/5 dark:border-white/5">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+      <h3 class="text-2xl font-semibold">Quick quiz: test your Google lore</h3>
+      <div class="mt-6 space-y-6">
+        <template x-for="(q,qi) in quiz" :key="qi">
+          <div class="rounded-2xl border border-black/10 dark:border-white/10 p-4">
+            <div class="font-medium" x-text="(qi+1) + '. ' + q.question"></div>
+            <div class="mt-3 grid sm:grid-cols-2 gap-2">
+              <template x-for="(a,ai) in q.answers" :key="ai">
+                <button @click="answer(q, a)" :class="answerClass(q,a)" class="rounded-xl px-3 py-2 text-left border border-black/10 dark:border-white/10">{{ a.text }}</button>
+              </template>
+            </div>
+            <p class="mt-2 text-sm" x-show="q.chosen">
+              <span x-show="q.correct===q.chosen" class="text-green-600 dark:text-green-400">Correct!</span>
+              <span x-show="q.correct!==q.chosen" class="text-rose-600 dark:text-rose-400">Not quite.</span>
+              <span class="opacity-80" x-text="' ' + q.explain"></span>
+            </p>
+          </div>
+        </template>
+        <div class="flex items-center gap-3">
+          <button @click="resetQuiz()" class="rounded-xl px-4 py-2 border border-black/10 dark:border-white/10">Reset quiz</button>
+          <div class="text-sm opacity-80">Score: <span x-text="score()"></span>/<span x-text="quiz.length"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-black/5 dark:border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid md:grid-cols-2 gap-6 items-start">
+      <div>
+        <h4 class="font-semibold">About this page</h4>
+        <p class="opacity-80 text-sm mt-2">Written and built by an AI assistant. Facts were compiled from Google’s official blogs and press releases, SEC filings, and encyclopedic sources. Tap any event’s “View sources” to see citations.</p>
+      </div>
+      <div class="md:text-right text-sm opacity-70">
+        <p>© 2025 · Educational, non-commercial showcase.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div x-show="lightbox" @click.self="lightbox=null" class="fixed inset-0 bg-black/70 backdrop-blur-sm grid place-items-center p-4" x-transition>
+    <img :src="lightbox" class="max-h-[85vh] max-w-[95vw] rounded-2xl shadow-2xl" alt="Expanded image"/>
+  </div>
+
+  <div x-show="sourcesOpen" @keydown.escape.window="sourcesOpen=false" class="fixed inset-0 bg-black/60 backdrop-blur-sm grid place-items-center p-4" x-transition>
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full border border-black/10 dark:border-white/10 overflow-hidden">
+      <div class="p-4 border-b border-black/10 dark:border-white/10 flex items-center">
+        <h4 class="font-semibold">Sources</h4>
+        <button class="ml-auto text-sm opacity-70" @click="sourcesOpen=false">Close</button>
+      </div>
+      <ul class="p-4 space-y-2 text-sm">
+        <template x-for="s in modalSources" :key="s.url">
+          <li>
+            <a :href="s.url" target="_blank" class="underline hover:no-underline">{{ s.title }}</a>
+            <span class="opacity-70">— {{ s.pub }}</span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function app(){
+      return {
+        dark: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+        year: 1998,
+        q: '',
+        category: 'all',
+        lightbox: null,
+        sourcesOpen: false,
+        modalSources: [],
+        events: [],
+        categories: [],
+        gallery: [
+          'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+          'https://upload.wikimedia.org/wikipedia/commons/8/87/Google_Chrome_icon_%28September_2014%29.svg',
+          'https://upload.wikimedia.org/wikipedia/commons/3/3e/Android_logo_2019.png',
+          'https://upload.wikimedia.org/wikipedia/commons/9/9f/YouTube_Logo_2017.svg',
+          'https://upload.wikimedia.org/wikipedia/commons/6/69/Google_Maps_Pin.svg',
+          'https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_Icon_%282020%29.svg',
+          'https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Photos_icon_%282020%29.svg',
+          'https://upload.wikimedia.org/wikipedia/commons/d/d7/Google-flutter-logo.png'
+        ],
+        quiz: [
+          {
+            question: 'What was Google called as a research project in 1996?',
+            answers: [
+              {text:'PageRank', key:'A'},
+              {text:'Backrub', key:'B'},
+              {text:'Googol', key:'C'},
+              {text:'Alpha', key:'D'}
+            ],
+            correct: 'B', chosen: null,
+            explain: 'Larry Page and Sergey Brin built a search prototype named “Backrub” at Stanford (1996).'
+          },
+          {
+            question: 'Which method did Google use for its 2004 IPO share allocation?',
+            answers: [
+              {text:'Traditional book-building', key:'A'},
+              {text:'Direct listing', key:'B'},
+              {text:'Dutch auction', key:'C'},
+              {text:'SPAC merger', key:'D'}
+            ],
+            correct: 'C', chosen: null,
+            explain: 'Google used a modified Dutch auction to price and allocate shares in August 2004.'
+          },
+          {
+            question: 'In 2015, Google created a new parent company named…',
+            answers: [
+              {text:'Alphabeta', key:'A'},
+              {text:'Alphabet', key:'B'},
+              {text:'Omni', key:'C'},
+              {text:'G Holdings', key:'D'}
+            ],
+            correct: 'B', chosen: null,
+            explain: 'Alphabet became the publicly traded parent; Google turned into a wholly owned subsidiary.'
+          },
+          {
+            question: 'Bard was renamed to what in 2024?',
+            answers: [
+              {text:'LaMDA', key:'A'},
+              {text:'Gemini', key:'B'},
+              {text:'Duet', key:'C'},
+              {text:'Vertex', key:'D'}
+            ],
+            correct: 'B', chosen: null,
+            explain: 'In Feb 2024, Bard became Gemini with a new app and Gemini Advanced.'
+          }
+        ],
+        init(){
+          this.events = [
+            {
+              id:'1996-backrub', year:1996, title:'Backrub prototype at Stanford', category:'Search',
+              summary:'Larry Page and Sergey Brin create a search prototype called “Backrub,” exploring link analysis that becomes PageRank.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/5/51/Google.png',
+              sources:[
+                {title:'History of Google', url:'https://en.wikipedia.org/wiki/History_of_Google', pub:'Wikipedia'}
+              ]
+            },
+            {
+              id:'1998-incorporation', year:1998, title:'Google incorporated', category:'Corporate',
+              summary:'Google, Inc. is founded in Menlo Park. The name plays on “googol,” a 1 followed by 100 zeros.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+              sources:[{title:'History of Google', url:'https://en.wikipedia.org/wiki/History_of_Google', pub:'Wikipedia'}]
+            },
+            {
+              id:'2004-ipo', year:2004, title:'IPO via Dutch auction', category:'Corporate',
+              summary:'Google goes public (NASDAQ: GOOG) on Aug 19, 2004 using a modified Dutch auction, raising $1.6B.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/2/2f/NASDAQ_MarketSite_Tower_-_New_York_City.jpg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/2/2f/NASDAQ_MarketSite_Tower_-_New_York_City.jpg',
+              sources:[
+                {title:'Going Dutch: The Google IPO', url:'https://www.btlj.org/data/articles2015/vol20/20_1_AR/20-berkeley-tech-l-j-0405-0442.pdf', pub:'Berkeley Tech. L.J.'},
+                {title:'Google Blazes Lonely IPO Trail', url:'https://www.wired.com/2004/11/google-blazes-lonely-ipo-trail', pub:'Wired'}
+              ]
+            },
+            {
+              id:'2005-maps', year:2005, title:'Google Maps launches', category:'Maps',
+              summary:'Google Maps launches on Feb 8, 2005 for desktop, later adding satellite, traffic and mobile.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/6/69/Google_Maps_Pin.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/6/69/Google_Maps_Pin.svg',
+              sources:[
+                {title:'A look back at 15 years of mapping the world', url:'https://blog.google/products/maps/look-back-15-years-mapping-world/', pub:'The Keyword'},
+                {title:'Google Maps', url:'https://en.wikipedia.org/wiki/Google_Maps', pub:'Wikipedia'}
+              ]
+            },
+            {
+              id:'2005-android', year:2005, title:'Android joins Google', category:'Android',
+              summary:'Google acquires Android Inc., paving the way for the Android OS and the modern smartphone era.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/3/3e/Android_logo_2019.png',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/3/3e/Android_logo_2019.png',
+              sources:[{title:'History of Google', url:'https://en.wikipedia.org/wiki/History_of_Google', pub:'Wikipedia'}]
+            },
+            {
+              id:'2006-youtube', year:2006, title:'YouTube acquisition', category:'YouTube',
+              summary:'Google agrees to acquire YouTube for $1.65B in stock (Oct 2006); deal closes Nov 2006.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/9/9f/YouTube_Logo_2017.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/9/9f/YouTube_Logo_2017.svg',
+              sources:[
+                {title:'Google to Acquire YouTube (Oct 9, 2006)', url:'https://www.sec.gov/Archives/edgar/data/1288776/000119312506206884/dex991.htm', pub:'SEC Press Release'},
+                {title:'Acquisition Closed (Nov 13, 2006)', url:'https://www.sec.gov/Archives/edgar/data/1288776/000119312506238320/dex991.htm', pub:'SEC Press Release'}
+              ]
+            },
+            {
+              id:'2008-chrome', year:2008, title:'Chrome browser debuts', category:'Chrome',
+              summary:'Google introduces the Chrome web browser, emphasizing speed, sandboxing and auto-updates.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/8/87/Google_Chrome_icon_%28September_2014%29.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/8/87/Google_Chrome_icon_%28September_2014%29.svg',
+              sources:[
+                {title:'A fresh take on the browser', url:'https://googleblog.blogspot.com/2008/09/fresh-take-on-browser.html', pub:'Official Google Blog'}
+              ]
+            },
+            {
+              id:'2015-alphabet', year:2015, title:'Alphabet is created', category:'Corporate',
+              summary:'Google restructures under new parent Alphabet Inc.; core products remain Google, Sundar Pichai becomes CEO.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+              sources:[
+                {title:'G is for Google', url:'https://blog.google/alphabet/google-alphabet/', pub:'The Keyword'},
+                {title:'Alphabet: New Operating Structure', url:'https://abc.xyz/investor/news/2015/0810', pub:'Alphabet Investor Relations'}
+              ]
+            },
+            {
+              id:'2024-gemini', year:2024, title:'Bard becomes Gemini', category:'AI',
+              summary:'Google renames Bard to Gemini and launches Gemini Advanced with Ultra 1.0 and a new mobile app.',
+              image:'https://upload.wikimedia.org/wikipedia/commons/4/4f/Material_design_icons_robot.svg',
+              thumb:'https://upload.wikimedia.org/wikipedia/commons/4/4f/Material_design_icons_robot.svg',
+              sources:[
+                {title:'Bard becomes Gemini', url:'https://blog.google/products/gemini/bard-gemini-advanced-app/', pub:'The Keyword'},
+                {title:'The next chapter of our Gemini era', url:'https://blog.google/technology/ai/google-gemini-update-sundar-pichai-2024/', pub:'The Keyword'}
+              ]
+            }
+          ];
+          this.categories = [...new Set(this.events.map(e=>e.category))];
+          this.year = 1998;
+        },
+        get current(){
+          if(!this.events.length) return null;
+          const candidates = this.events
+            .filter(e => e.year <= this.year)
+            .sort((a,b)=> b.year - a.year);
+          return candidates[0] || this.events[0];
+        },
+        get filtered(){
+          const q = this.q.toLowerCase();
+          return this.events.filter(e =>
+            (this.category === 'all' || e.category === this.category) &&
+            (!q || e.title.toLowerCase().includes(q) || e.summary.toLowerCase().includes(q))
+          ).sort((a,b)=> a.year - b.year);
+        },
+        go(e){ this.year = e.year; },
+        resetFilters(){ this.q=''; this.category='all'; this.year = 1998; },
+        openSources(e){ this.modalSources = e.sources; this.sourcesOpen = true; },
+        toggleTheme(){ this.dark = !this.dark; localStorage.setItem('google-history-theme', this.dark ? 'dark':'light'); },
+        feelingLucky(){ const e = this.events[Math.floor(Math.random()*this.events.length)]; this.go(e); },
+        answer(q, a){ q.chosen = a.key; },
+        answerClass(q,a){ return q.chosen ? (a.key===q.correct ? 'border-green-500 ring-2 ring-green-500/30' : (a.key===q.chosen?'border-rose-500 ring-2 ring-rose-500/30':'')) : '' },
+        resetQuiz(){ this.quiz.forEach(q=> q.chosen=null); },
+        score(){ return this.quiz.filter(q=> q.chosen===q.correct).length; }
+      }
+    }
+  </script>
+</body>
+</html>
